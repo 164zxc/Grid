@@ -1,11 +1,27 @@
 import $ from "jquery";
-import 'bootstrap-css-only';
-import gNews from './modules/gNews';
-import { newsTemplate } from './modules/templates';
+import axios from "axios";
+import '../css/style.css';
+
+const socialNewsURL =
+  "https://newsapi.org/v2/everything?q=social&pageSize=6&apiKey=";
+const entertainmentNewsURL =
+  "https://newsapi.org/v2/everything?q=entertainment&pageSize=6&apiKey=";
+const sportNewsURL =
+  "https://newsapi.org/v2/everything?q=sport&pageSize=6&apiKey=";
+const taiwanNewsURL =
+  "https://newsapi.org/v2/everything?q=taiwan&pageSize=6";
+const apiKey = "a490ea4d42a542f08ed0e12df752bba4";
+
+
+let newsTemplate = news =>`
+   <li class="list-group-item">
+      <img src="${news.urlToImage}" alt="newsImage">
+   </li>
+`;
 
 const getSocialNews = async () => {
   try {
-    let resp = await gNews("/everything?q=social");
+    let resp = await axios.get(socialNewsURL + apiKey);
     let newsList = resp.data.articles.map(news => newsTemplate(news));
     $("#socialNews").html(newsList);
   } catch (error) {
@@ -15,7 +31,7 @@ const getSocialNews = async () => {
 
 const getEntertainmentNews = async () => {
   try {
-    let resp = await gNews("/everything?q=entertainment");
+    let resp = await axios.get(entertainmentNewsURL + apiKey);
     let newsList = resp.data.articles.map(news => newsTemplate(news));
     $("#entertainmentNews").html(newsList);
   } catch (error) {
@@ -23,9 +39,23 @@ const getEntertainmentNews = async () => {
   }
 };
 
+const getTaiwanNews = async () => {
+  try {
+    let resp = await axios.get(taiwanNewsURL, {
+      headers: {
+        Authorization: apiKey
+      }
+    });
+    let newsList = resp.data.articles.map(news => newsTemplate(news));
+    $("#taiwanNews").html(newsList);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getSportNews = async () => {
   try {
-    let resp = await gNews("/everything?q=sport");
+    let resp = await axios.get(sportNewsURL + apiKey);
     let newsList = resp.data.articles.map(news => newsTemplate(news));
     $("#sportNews").html(newsList);
   } catch (error) {
@@ -33,15 +63,6 @@ const getSportNews = async () => {
   }
 };
 
-const getTaiwanNews = async () => {
-  try {
-    let resp = await gNews("/everything?q=taiwan");
-    let newsList = resp.data.articles.map(news => newsTemplate(news));
-    $("#taiwanNews").html(newsList);
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 getSocialNews();
 getEntertainmentNews();
